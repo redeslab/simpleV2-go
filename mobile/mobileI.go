@@ -6,7 +6,9 @@ import (
 	"github.com/redeslab/go-simple/account"
 	"github.com/redeslab/go-simple/network"
 	"github.com/redeslab/go-simple/node"
+	"io/ioutil"
 	"net"
+	"net/http"
 	"time"
 )
 
@@ -97,4 +99,24 @@ func TestPing(mid string) []byte {
 func MinerPort(addr string) int32 {
 	mid := account.ID(addr)
 	return int32(mid.ToServerPort())
+}
+
+func AndroidApkVersion() (ver string, err error) {
+	ver = ""
+	err = fmt.Errorf("not found")
+	resp, err := http.Get("https://redeslab.github.io/version.js")
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	if resp.StatusCode != 200 {
+		err = fmt.Errorf("status code is[%d]", resp.StatusCode)
+		return
+	}
+	ver = string(body)
+	return ver, nil
 }
