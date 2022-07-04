@@ -12,7 +12,12 @@ import (
 	"time"
 )
 
-const TXCheckTime = time.Second * 2
+const (
+	TXCheckTime   = time.Second * 2
+	AndroidVerUrl = "https://redeslab.github.io/version.js"
+	RuleDataUrl   = "https://redeslab.github.io/rule.txt"
+	RuleVerUrl    = "https://redeslab.github.io/ruleVer.js"
+)
 
 type UICallBack interface {
 	Log(str string)
@@ -102,21 +107,50 @@ func MinerPort(addr string) int32 {
 }
 
 func AndroidApkVersion() (ver string, err error) {
-	ver = ""
-	err = fmt.Errorf("not found")
-	resp, err := http.Get("https://redeslab.github.io/version.js")
+	data, err := getHttpJsonData(AndroidVerUrl)
 	if err != nil {
-		return
+		return "", err
+	}
+	return string(data), nil
+}
+
+type RuleVer struct {
+	Ver int
+}
+
+func RuleDataUpdate(nowVer int) (string, error) {
+	data, err := getHttpJsonData(RuleVerUrl)
+	if err != nil {
+		return "", err
+	}
+	ver := &RuleVer{}
+	if err := json.Unmarshal(data, ver); err != nil {
+		return "", err
+	}
+	if ver.Ver <= nowVer {
+		return "", nil
+	}
+
+	data, err = getHttpJsonData(RuleDataUrl)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+func getHttpJsonData(url string) ([]byte, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return
+		return nil, err
 	}
 	if resp.StatusCode != 200 {
 		err = fmt.Errorf("status code is[%d]", resp.StatusCode)
-		return
+		return nil, err
 	}
-	ver = string(body)
-	return ver, nil
+	return body, nil
 }
