@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/ethereum/go-ethereum v1.10.13
-	github.com/lightStarShip/go-tun2simple v0.0.0-20220703040040-fb98d76c353b
+	github.com/lightStarShip/go-tun2simple v0.0.0-20220706041817-33db43a16a90
 	github.com/redeslab/go-simple v1.0.6
 )
 
