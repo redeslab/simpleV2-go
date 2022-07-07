@@ -1,6 +1,7 @@
 package simple
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -132,4 +133,8 @@ func AesKeyForMiner(minerAddr string) []byte {
 		return nil
 	}
 	return aesKey[:]
+}
+
+func AesKeyBase64ForMiner(minerAddr string) string {
+	return hex.EncodeToString(AesKeyForMiner(minerAddr))
 }
