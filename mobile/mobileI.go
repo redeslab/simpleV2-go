@@ -86,7 +86,8 @@ func TestPing(mid string) []byte {
 		fmt.Println("=====>WriteJsonMsg err:", err)
 		return nil
 	}
-	err = testConn.ReadJsonMsg(&node.MsgAck{})
+	ctrlBuf := make([]byte, 1<<11)
+	err = testConn.ReadJsonBuffer(ctrlBuf, &node.MsgAck{})
 	if err != nil {
 		fmt.Println("=====>ReadJsonMsg err:", err)
 		return nil
