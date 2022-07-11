@@ -119,20 +119,21 @@ type RuleVer struct {
 	Ver int
 }
 
-func RuleDataUpdate(nowVer int) (string, error) {
+func RuleVerInt() (int, error) {
 	data, err := getHttpJsonData(RuleVerUrl)
 	if err != nil {
-		return "", err
+		return -1, err
 	}
 	ver := &RuleVer{}
 	if err := json.Unmarshal(data, ver); err != nil {
-		return "", err
-	}
-	if ver.Ver <= nowVer {
-		return "", nil
+		return -1, err
 	}
 
-	data, err = getHttpJsonData(RuleDataUrl)
+	return ver.Ver, nil
+}
+
+func RuleDataLoad() (string, error) {
+	data, err := getHttpJsonData(RuleDataUrl)
 	if err != nil {
 		return "", err
 	}
