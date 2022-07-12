@@ -13,10 +13,12 @@ import (
 )
 
 const (
-	TXCheckTime   = time.Second * 2
-	AndroidVerUrl = "https://redeslab.github.io/version.js"
-	RuleDataUrl   = "https://redeslab.github.io/rule.txt"
-	RuleVerUrl    = "https://redeslab.github.io/ruleVer.js"
+	TXCheckTime    = time.Second * 2
+	AndroidVerUrl  = "https://redeslab.github.io/version.js"
+	RuleDataUrl    = "https://redeslab.github.io/rule.txt"
+	MustHitDataUrl = "https://redeslab.github.io/must_hit.txt"
+	ByPassDataUrl  = "https://redeslab.github.io/bypass.txt"
+	RuleVerUrl     = "https://redeslab.github.io/ruleVer.js"
 )
 
 type UICallBack interface {
@@ -116,24 +118,43 @@ func AndroidApkVersion() (ver string, err error) {
 }
 
 type RuleVer struct {
-	Ver int
+	DnsVer    int `json:"dns"`
+	ByPassVer int `json:"by_pass"`
+	MustHit   int `json:"must_hit"`
 }
 
-func RuleVerInt() (int, error) {
+func RuleVerInt() (string, error) {
 	data, err := getHttpJsonData(RuleVerUrl)
 	if err != nil {
-		return -1, err
+		fmt.Println("======>>>RuleVerInt err:", err.Error())
+		return "", err
 	}
 	ver := &RuleVer{}
 	if err := json.Unmarshal(data, ver); err != nil {
-		return -1, err
+		fmt.Println("======>>>RuleVerInt err:", err.Error())
+		return "", err
 	}
-
-	return ver.Ver, nil
+	return string(data), nil
 }
 
 func RuleDataLoad() (string, error) {
 	data, err := getHttpJsonData(RuleDataUrl)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+func ByPassDataLoad() (string, error) {
+	data, err := getHttpJsonData(ByPassDataUrl)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+func MustHitData() (string, error) {
+	data, err := getHttpJsonData(MustHitDataUrl)
 	if err != nil {
 		return "", err
 	}
