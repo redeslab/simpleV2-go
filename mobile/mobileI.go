@@ -123,18 +123,18 @@ type RuleVer struct {
 	MustHit   int `json:"must_hit"`
 }
 
-func RuleVerInt() (string, error) {
+func RuleVerInt() ([]byte, error) {
 	data, err := getHttpJsonData(RuleVerUrl)
 	if err != nil {
 		fmt.Println("======>>>RuleVerInt err:", err.Error())
-		return "", err
+		return nil, err
 	}
 	ver := &RuleVer{}
 	if err := json.Unmarshal(data, ver); err != nil {
 		fmt.Println("======>>>RuleVerInt err:", err.Error())
-		return "", err
+		return nil, err
 	}
-	return string(data), nil
+	return data, nil
 }
 
 func RuleDataLoad() (string, error) {
